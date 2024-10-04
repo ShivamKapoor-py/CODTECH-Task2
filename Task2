@@ -1,1 +1,163 @@
+/*
+TASK THREE: STUDENT MANAGEMENT SYSTEM
+Create a student management system that can handle student registrations,
+maintain student records, and calculate grades. The system should allow adding,
+editing, and deleting student information.
+*/
+
+#include <iostream>
+#include <vector>
+#include <string>
+#include <iomanip>
+
+using namespace std;
+
+// Class to represent a student
+class Student {
+public:
+    string name;
+    int age;
+    string rollNumber;
+    vector<int> grades;
+
+    Student(string n, int a, string roll) : name(n), age(a), rollNumber(roll) {}
+
+    // Function to calculate the average grade
+    double calculateAverage() const {
+        if (grades.empty()) return 0.0;
+        double sum = 0.0;
+        for (int grade : grades) {
+            sum += grade;
+        }
+        return sum / grades.size();
+    }
+
+    // Function to display student information - marked as const
+    void display() const { // <-- Add const here
+        cout << "Name: " << name << ", Age: " << age << ", Roll Number: " << rollNumber
+             << ", Average Grade: " << fixed << setprecision(2) << calculateAverage() << endl;
+    }
+};
+
+// Class to manage student records
+class StudentManagementSystem {
+private:
+    vector<Student> students;
+
+public:
+    // Function to add a student
+    void addStudent() {
+        string name;
+        int age;
+        string rollNumber;
+
+        cout << "Enter student name: ";
+        cin >> name;
+        cout << "Enter student age: ";
+        cin >> age;
+        cout << "Enter roll number: ";
+        cin >> rollNumber;
+
+        Student newStudent(name, age, rollNumber);
+        students.push_back(newStudent);
+        cout << "Student added successfully!" << endl;
+    }
+
+    // Function to edit student information
+    void editStudent() {
+        string rollNumber;
+        cout << "Enter roll number of the student to edit: ";
+        cin >> rollNumber;
+
+        for (Student& student : students) {
+            if (student.rollNumber == rollNumber) {
+                cout << "Editing student: " << student.name << endl;
+                cout << "Enter new name (leave blank for no change): ";
+                string newName;
+                cin.ignore();
+                getline(cin, newName);
+                if (!newName.empty()) student.name = newName;
+
+                cout << "Enter new age (0 for no change): ";
+                int newAge;
+                cin >> newAge;
+                if (newAge != 0) student.age = newAge;
+
+                cout << "Enter new roll number (leave blank for no change): ";
+                string newRollNumber;
+                cin >> newRollNumber;
+                if (!newRollNumber.empty()) student.rollNumber = newRollNumber;
+
+                cout << "Student updated successfully!" << endl;
+                return;
+            }
+        }
+        cout << "Student not found!" << endl;
+    }
+
+    // Function to delete a student
+    void deleteStudent() {
+        string rollNumber;
+        cout << "Enter roll number of the student to delete: ";
+        cin >> rollNumber;
+
+        for (size_t i = 0; i < students.size(); ++i) {
+            if (students[i].rollNumber == rollNumber) {
+                students.erase(students.begin() + i);
+                cout << "Student deleted successfully!" << endl;
+                return;
+            }
+        }
+        cout << "Student not found!" << endl;
+    }
+
+    // Function to display all students
+    void displayStudents() {
+        if (students.empty()) {
+            cout << "No students available." << endl;
+            return;
+        }
+        cout << "\nStudent Records:\n";
+        for (const Student& student : students) {
+            student.display(); // Now valid since display() is const
+        }
+    }
+};
+
+// Main function to run the Student Management System
+int main() {
+    StudentManagementSystem sms;
+    int choice;
+
+    while (true) {
+        cout << "\n--- Student Management System ---\n";
+        cout << "1. Add Student\n";
+        cout << "2. Edit Student\n";
+        cout << "3. Delete Student\n";
+        cout << "4. Display All Students\n";
+        cout << "5. Exit\n";
+        cout << "Enter your choice: ";
+        cin >> choice;
+
+        switch (choice) {
+            case 1:
+                sms.addStudent();
+                break;
+            case 2:
+                sms.editStudent();
+                break;
+            case 3:
+                sms.deleteStudent();
+                break;
+            case 4:
+                sms.displayStudents();
+                break;
+            case 5:
+                cout << "Exiting the program." << endl;
+                return 0;
+            default:
+                cout << "Invalid choice! Please try again." << endl;
+        }
+    }
+}
 
